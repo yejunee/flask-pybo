@@ -1,0 +1,186 @@
+가상환경디렉터리생성 & 가상 화면 만들기
+C:\Users\pahkey> cd \
+C:\> mkdir venvs
+C:\> cd venvs
+C:\venvs> python -m venv myproject  / 디렉터리 = 가상환경
+
+가상환경진입
+C:\venvs> cd C:\venvs\myproject\Scripts
+C:\venvs\myproject\Scripts> activate
+(myproject) C:\venvs\myproject\Scripts>
+
+가상 환경에서 벗어나기
+(myproject) C:\venvs\myproject\Scripts> deactivate
+C:\venvs\myproject\Scripts>
+
+플라스크 설치
+ 가상환경인진확인
+ C:\venvs\myproject\Scripts> activate
+ (myproject) C:\venvs\myproject\Scripts>
+ 가상환경에서 플라스크 설치
+ (myproject) C:\venvs\myproject\Scripts> pip install flask
+ pip최신버전설치
+ (myproject) C:\venvs\myproject\Scripts> python -m pip install --upgrade pip
+
+
+프로젝트 디렉터리 생성하기
+C:\> mkdir projects     /   폴더 및 하위폴더 삭제 rd /s/q
+C:\> cd projects
+
+가상환경진입
+C:\projects> C:\venvs\myproject\Scripts\activate
+(myproject) C:\projects>
+
+플라스크 프로젝트 담을 디렉터리 생성 이동
+(myproject) C:\projects> mkdir myproject
+(myproject) C:\projects> cd myproject
+(myproject) C:\projects\myproject>
+
+배치 파일 위치를 PATH 환경 변수에 추가하기
+
+배치 파일 생성
+[파일명: C:/venvs/myproject.cmd]
+@echo off
+cd c:/projects/myproject
+c:/venvs/myproject/scripts/activate
+
+
+배치 파일 위치를 PATH 환경 변수에 추가하기
+<윈도우+R> 키를 입력하여 다음처럼 sysdm.cpl 명령을 입력한 다음 <확인>을 누르자.
+<고급> 탭을 선택하고 <환경 변수> 버튼을 누르자.
+변수 중 <Path>를 선택하고 <편집> 버튼을 누르자.
+<새로 만들기(N)> 버튼
+C:\venvs라는 디렉터리를 추가하고 <확인>
+
+환경변수확인
+C:\Users\shibajie> set path
+Path=C:\Windows\system32; (... 생략 ...) ;C:\venvs
+PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+-----------------------------------------------------------
+(myproject) c:\projects\myproject> set FLASK_APP=pybo
+(myproject) c:\projects\myproject> set FLASK_DEBUG=true
+(myproject) c:\projects\myproject> flask run
+
+배치 파일 실행 가상환경 진입
+C:\Users\shibajie> myproject
+(myproject) C:\projects\myproject>
+
+플라스크 애플리케이션 설정
+(myproject) c:\projects\myproject>set FLASK_APP=pybo
+개발 서버를 디버깅 가능하도록 실행하기
+(myproject) c:\projects\myproject>set FLASK_DEBUG=true
+
+최종 배치파일생성
+[파일명: C:/venvs/myproject.cmd]
+@echo off
+cd c:/projects/myproject
+set FLASK_APP=pybo
+set FLASK_DEBUG=true
+c:/venvs/myproject/scripts/activate
+
+
+
+
+ORM 라이브러리 설치하기
+(myproject) c:\projects\myproject>pip install flask-migrate
+Collecting Flask-Migrate
+(... 생략 ...)
+
+설정 파일 추가하기
+파이보에 ORM을 적용하려면 데이터베이스 설정이 필요하다. 루트 디렉터리에 config.py 파일을 생성하고 다음과 같은 코드를 작성하자.
+[파일명: projects/myproject/config.py]
+import os
+
+BASE_DIR = os.path.dirname(__file__)
+
+SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(os.path.join(BASE_DIR, 'pybo.db'))
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+데이터베이스 초기화 / migrations 디렉터리에 자동으로 생성 / Flask-Migrate 라이브러리가 내부적으로 사용하는 파일들
+(myproject) c:\projects\myproject>flask db init
+앞으로 모델을 추가하거나 변경할 때는
+flask db migrate 명령과 flask db upgrade
+. 명령어 종류를 확인하고 싶다면 명령 프롬프트에서 flask db 명령
+
+모델을 새로 생성하거나 변경할 때 사용 (실행하면 작업파일이 생성된다.)
+flask db migrate
+
+모델의 변경 내용을 실제 데이터베이스에 적용할 때 사용 (위에서 생성된 작업파일을 실행하여 데이터베이스를 변경한다.)
+flask db upgrade
+
+
+리비전 파일 생성하기
+(myproject) c:\projects\myproject> flask db migrate
+
+리비전 파일 실행하기
+(myproject) c:\projects\myproject> flask db upgrade
+
+모델 사용하기
+플라스크 셸 실행하기
+(myproject) c:\projects\myproject>flask shell
+
+
+------------------------------------------------------
+플라스크 셸 실행하기
+flask shell
+
+질문 저장하기
+from pybo.models import Question, Answer
+from datetime import datetime
+q = Question(subject='pybo가 무엇인가요?', content='pybo에 대해서 알고 싶습니다.', create_date=datetime.now())
+from pybo import db
+db.session.add(q)
+db.session.commit()
+
+데이터 조회하기
+Question.query.all()
+Question.query.filter(Question.id==1).all()
+Question.query.get(1)
+Question.query.filter(Question.subject.like('%플라스크%')).all()
+Question.query.filter(Question.subject.ilike('%플라스크%')).all() 대소문자구분x
+
+데이터 수정하기
+q = Question.query.get(2)
+q
+q.subject = 'Flask Model Question'
+db.session.commit()
+
+데이터 삭제하기
+q = Question.query.get(1)
+db.session.delete(q)
+db.session.commit()
+
+답변 데이터 저장하기
+>>> from datetime import datetime
+>>> from pybo.models import Question, Answer
+>>> from pybo import db
+>>> q = Question.query.get(2)
+>>> a = Answer(question=q, content='네 자동으로 생성됩니다.', create_date=datetime.now())
+>>> db.session.add(a)
+>>> db.session.commit()
+>>> a.id
+>>> a = Answer.query.get(1)
+>>> a
+
+
+
+답변에 연결된 질문 찾기 vs 질문에 달린 답변 찾기
+a.question
+
+
+플라스크 폼 모듈 설치하기
+(myproject) c:\projects\myproject> pip install flask-wtf
+
+플라스크에서 사용할 수 있는 폼 속성에 대한 보다 자세한 내용은 다음 URL
+https://wtforms.readthedocs.io/en/2.3.x/fields/#basic-fields
+플라스크에서 사용할 수 있는 validators에 대한 보다 자세한 내용은 다음 URL을 참고
+https://wtforms.readthedocs.io/en/2.3.x/validators/#built-in-validators
+
+최종 리비전
+flask db heads
+현재 리비전
+flask db current
+현재 리비전을 최종 리비전으로 변경하기
+flask db stamp heads
+
+

@@ -1,0 +1,21 @@
+├── pybo/
+│      ├─ __init__.py
+│      ├─ models.py          데이터베이스를 처리하는 파일
+│      ├─ forms.py           서버로 전송된 폼을 처리하는 파일
+│      ├─ views/             화면을 구성하는 views 디렉터리
+│      │   └─ main_views.py  main_views.py, question_views.py, answer_views.py
+│      ├─ static/            CSS, 자바스크립트, 이미지 파일을 저장하는 디렉터리
+│      │   └─ style.css      스타일시트(.css), 자바스크립트(.js) 그리고 이미지 파일(.jpg, .png) 등
+│      └─ templates/         HTML 파일을 저장하는 디렉터리
+│            └─ index.html   파이보의 질문 목록, 질문 상세 등의 HTML 파일을 저장
+│                            question_list.html, question_detail.html
+└── config.py                파이보 프로젝트를 설정하는 파일
+
+
+# ORM(object relational mapping)을 지원하는
+파이썬 데이터베이스 도구인 SQLAlchemy / 모델 기반으로 데이터베이스를 처리
+
+# 웹 브라우저에서 서버로 전송된 폼을 처리할 때
+WTForms라는 라이브러리 / 모델 기반으로 폼을 처리
+
+# 폼 클래스를 정의할 forms.py 파일

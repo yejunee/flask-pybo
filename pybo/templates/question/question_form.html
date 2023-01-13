@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- 질문 등록 -->
+<div class="container">
+    <h5 class="my-3 border-bottom pb-2">질문등록</h5>
+    <form method="post" class="my-3">  <!-- form 태그에 action 속성을 지정하지 않으면 현재 페이지의 URL이 디폴트 action으로 설정-->
+        {{ form.csrf_token }}
+        <!-- 오류표시 Start -->
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field, errors in form.errors.items() %} <!--입력폼field 등록된에러errors-->
+            <strong>{{ form[field].label }}</strong>
+            <ul>
+                {% for error in errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!-- 오류표시 End -->
+        <div class="mb-3">
+            <label for="subject">제목</label>
+            <input type="text" class="form-control" name="subject" id="subject" value="{{ form.subject.data or '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="content">내용</label>
+            <textarea class="form-control" name="content" id="content" rows="10">{{ form.content.data or '' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">저장하기</button>  <!-- btn공백(하위선택자)btn-success등 -->
+    </form>
+</div>
+{% endblock %}
+
+
+
+<!--forms.py QuestionForm에서 작성한 두개의 필드 subject와 content가 템플릿에서 사용 -->
+<!--    {{ form.subject.label }} &lt;!&ndash;라벨 표시&ndash;&gt;-->
+<!--        {{ form.subject(class="form-control") }} &lt;!&ndash;입력폼&ndash;&gt;-->
+
+<!--        {{ form.content.label }}-->
+<!--        {{ form.content(class="form-control") }}-->
